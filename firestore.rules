@@ -1,0 +1,43 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Only this Google account can manage the website.
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email == "thejyrosmethod.miami@gmail.com"
+        && request.auth.token.email_verified == true;
+    }
+
+    // Reviews: anyone can send one (it starts as "pending");
+    // only published reviews are public; only the admin can publish, reply or delete.
+    match /reviews/{id} {
+      allow read: if resource.data.status == "approved" || isAdmin();
+      allow create: if request.resource.data.keys().hasOnly(["name", "who", "rating", "text", "lang", "status", "createdAt"])
+        && request.resource.data.status == "pending"
+        && request.resource.data.name is string && request.resource.data.name.size() > 0 && request.resource.data.name.size() <= 60
+        && request.resource.data.who in ["student", "parent"]
+        && request.resource.data.rating is int && request.resource.data.rating >= 1 && request.resource.data.rating <= 5
+        && request.resource.data.text is string && request.resource.data.text.size() > 0 && request.resource.data.text.size() <= 800
+        && request.resource.data.lang in ["en", "es"]
+        && request.resource.data.createdAt == request.time;
+      allow update, delete: if isAdmin();
+    }
+
+    // Contact form messages: anyone can send; only the admin can read or delete.
+    match /messages/{id} {
+      allow create: if request.resource.data.keys().hasOnly(["name", "email", "plan", "student", "message", "lang", "createdAt"])
+        && request.resource.data.name is string && request.resource.data.name.size() > 0 && request.resource.data.name.size() <= 80
+        && request.resource.data.email is string && request.resource.data.email.size() <= 120
+        && request.resource.data.message is string && request.resource.data.message.size() <= 2000
+        && request.resource.data.createdAt == request.time;
+      allow read, delete: if isAdmin();
+    }
+
+    // Website text edits: everyone reads them; only the admin changes them.
+    match /content/{doc} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+  }
+}

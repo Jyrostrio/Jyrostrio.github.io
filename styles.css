@@ -364,6 +364,14 @@ fieldset.rate legend{font:600 .75rem/1.4 var(--body);letter-spacing:.18em;text-t
 .rate{display:grid;gap:.4rem}
 .rate-label{font-size:.85rem;color:var(--muted);min-height:1.2em}
 .rv-count{justify-self:end;font-size:.75rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.review-summary{display:flex;align-items:center;gap:.9rem;padding:1.25rem 1.5rem;border:1px solid var(--line);background:var(--surface)}
+.review-summary strong{font:300 2.4rem/1 var(--body);letter-spacing:.04em}
+.review-summary span{color:var(--muted);font-size:.9rem}
+.review .stars,.review-summary .stars{display:flex;gap:3px}
+.review .stars svg,.review-summary .stars svg{width:18px;height:18px;fill:var(--accent)}
+.review .stars .off svg,.review-summary .stars .off svg{fill:var(--line)}
+.review-reply{margin-top:.25rem;padding:1rem 1.1rem;border-left:2px solid var(--accent);background:color-mix(in srgb, var(--ink) 4%, transparent);display:grid;gap:.4rem}
+.review-reply p{margin:0;color:var(--muted);line-height:1.7}
 .rv-note{font-size:.85rem;color:var(--muted)}
 
 /* FAQ */
