@@ -352,9 +352,9 @@ function renderReviews() {
   var empty = list.querySelector('.review-empty'); if (empty) empty.style.display = 'none';
   list.querySelectorAll('.review').forEach(function (n) { n.remove(); });
   var total = 0;
-  REVIEWS.forEach(function (r, i) {
+  REVIEWS.forEach(function (r) {
     total += r.rating;
-    var f = document.createElement('figure'); f.className = 'review' + (i >= 3 ? ' rv-extra' : ''); f.setAttribute('data-noi18n', '');
+    var f = document.createElement('figure'); f.className = 'review'; f.setAttribute('data-noi18n', '');
     var date = r.createdAt && r.createdAt.toDate ? r.createdAt.toDate().toLocaleDateString(LANG === 'es' ? 'es' : 'en-US', { year: 'numeric', month: 'long' }) : '';
     f.innerHTML = '<div class="stars" role="img" aria-label="' + r.rating + ' / 5">' + starRow(r.rating) + '</div>' +
       '<blockquote></blockquote><figcaption><strong></strong><span></span></figcaption>' +
@@ -368,23 +368,6 @@ function renderReviews() {
   var avg = (total / REVIEWS.length).toFixed(1);
   sum.innerHTML = '<strong>' + avg + '</strong><div class="stars" aria-hidden="true">' + starRow(Math.round(avg)) + '</div><span>' + REVIEWS.length + ' ' + esc(T(REVIEWS.length === 1 ? 'review' : 'reviews')) + '</span>';
   sum.hidden = false;
-  var tools = document.getElementById('rv-tools');
-  if (REVIEWS.length > 3) {
-    if (!tools) {
-      tools = document.createElement('div'); tools.id = 'rv-tools'; tools.className = 'faq-tools rv-tools';
-      tools.innerHTML = '<button class="btn ghost" type="button" data-rv="1"></button><button class="btn ghost" type="button" data-rv="0"></button>';
-      tools.addEventListener('click', function (e) {
-        var b = e.target.closest('[data-rv]'); if (!b) return;
-        var open = b.getAttribute('data-rv') === '1'; list.classList.toggle('rv-open', open);
-        if (!open) list.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      });
-      list.appendChild(tools);
-    }
-    tools.setAttribute('data-noi18n', '');
-    tools.children[0].textContent = T('Expand all') + ' (' + REVIEWS.length + ')';
-    tools.children[1].textContent = T('Collapse all');
-    list.appendChild(tools);
-  }
 }
 if (FB) FB.collection('reviews').where('status', '==', 'approved').get().then(function (snap) {
   snap.forEach(function (d) { REVIEWS.push(d.data()); });
