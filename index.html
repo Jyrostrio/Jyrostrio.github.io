@@ -298,6 +298,7 @@ function T(str) { return LANG === 'es' ? (ESO[str] || ES[str] || str) : (ENO[str
 function esc(v) { return String(v).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
 function brk(v) { return esc(v).replace(/\[(.+?)\]/g, '<span class="gold">$1</span>'); }
 var FB = null;
+function withTimeout(pr) { return Promise.race([pr, new Promise(function (_, no) { setTimeout(function () { no(new Error('timeout')); }, 15000); })]); }
 try { if (window.firebase && SITE.FIREBASE) { firebase.initializeApp(SITE.FIREBASE); FB = firebase.firestore(); } } catch (e) { FB = null; }
 var I18N = (function () {
   var nodes = [], phs = [], heads = [], fixed = [];
@@ -351,9 +352,9 @@ function renderReviews() {
   var empty = list.querySelector('.review-empty'); if (empty) empty.style.display = 'none';
   list.querySelectorAll('.review').forEach(function (n) { n.remove(); });
   var total = 0;
-  REVIEWS.forEach(function (r) {
+  REVIEWS.forEach(function (r, i) {
     total += r.rating;
-    var f = document.createElement('figure'); f.className = 'review'; f.setAttribute('data-noi18n', '');
+    var f = document.createElement('figure'); f.className = 'review' + (i >= 3 ? ' rv-extra' : ''); f.setAttribute('data-noi18n', '');
     var date = r.createdAt && r.createdAt.toDate ? r.createdAt.toDate().toLocaleDateString(LANG === 'es' ? 'es' : 'en-US', { year: 'numeric', month: 'long' }) : '';
     f.innerHTML = '<div class="stars" role="img" aria-label="' + r.rating + ' / 5">' + starRow(r.rating) + '</div>' +
       '<blockquote></blockquote><figcaption><strong></strong><span></span></figcaption>' +
@@ -367,6 +368,23 @@ function renderReviews() {
   var avg = (total / REVIEWS.length).toFixed(1);
   sum.innerHTML = '<strong>' + avg + '</strong><div class="stars" aria-hidden="true">' + starRow(Math.round(avg)) + '</div><span>' + REVIEWS.length + ' ' + esc(T(REVIEWS.length === 1 ? 'review' : 'reviews')) + '</span>';
   sum.hidden = false;
+  var tools = document.getElementById('rv-tools');
+  if (REVIEWS.length > 3) {
+    if (!tools) {
+      tools = document.createElement('div'); tools.id = 'rv-tools'; tools.className = 'faq-tools rv-tools';
+      tools.innerHTML = '<button class="btn ghost" type="button" data-rv="1"></button><button class="btn ghost" type="button" data-rv="0"></button>';
+      tools.addEventListener('click', function (e) {
+        var b = e.target.closest('[data-rv]'); if (!b) return;
+        var open = b.getAttribute('data-rv') === '1'; list.classList.toggle('rv-open', open);
+        if (!open) list.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+      list.appendChild(tools);
+    }
+    tools.setAttribute('data-noi18n', '');
+    tools.children[0].textContent = T('Expand all') + ' (' + REVIEWS.length + ')';
+    tools.children[1].textContent = T('Collapse all');
+    list.appendChild(tools);
+  }
 }
 if (FB) FB.collection('reviews').where('status', '==', 'approved').get().then(function (snap) {
   snap.forEach(function (d) { REVIEWS.push(d.data()); });
@@ -518,11 +536,11 @@ document.querySelectorAll('.legends figure').forEach(function (f) {
     var reset = function () { f.reset(); lab.textContent = T('Tap a star'); cnt.textContent = '0 / 800'; };
     if (!FB) { done(T('Thank you, {name}. Your review will appear here once it is approved.').replace('{name}', name.split(' ')[0]) + ' ' + T('(Preview: reviews are saved once the site is connected to Firebase.)')); reset(); return; }
     btn.disabled = true; done(T('Sending…'));
-    FB.collection('reviews').add({
+    withTimeout(FB.collection('reviews').add({
       name: name.slice(0, 60), who: document.getElementById('rv-who').selectedIndex === 1 ? 'parent' : 'student',
       rating: +r.value, text: text.slice(0, 800), lang: LANG, status: 'pending',
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    }).then(function () { done(T('Thank you, {name}. Your review was sent and will appear here once it is approved.').replace('{name}', name.split(' ')[0])); reset(); })
+    })).then(function () { done(T('Thank you, {name}. Your review was sent and will appear here once it is approved.').replace('{name}', name.split(' ')[0])); reset(); })
       .catch(function () { done(T('Something went wrong. Please try again in a moment.')); })
       .then(function () { btn.disabled = false; });
   });
@@ -536,12 +554,12 @@ document.getElementById('trial-form').addEventListener('submit', function (e) {
   if (!name || !email.value.trim() || !email.checkValidity()) return done(T('Add your name and a valid email so I can reply.'));
   if (!FB) { done(T('Thanks, {name}. This form is a preview; connect it to your email or booking tool before the site goes live.').replace('{name}', name.split(' ')[0])); form.reset(); return; }
   btn.disabled = true; done(T('Sending…'));
-  FB.collection('messages').add({
+  withTimeout(FB.collection('messages').add({
     name: name.slice(0, 80), email: email.value.trim().slice(0, 120),
     plan: document.getElementById('length').selectedIndex, student: document.getElementById('student').selectedIndex === 1 ? 'child' : 'self',
     message: document.getElementById('message').value.trim().slice(0, 2000), lang: LANG,
     createdAt: firebase.firestore.FieldValue.serverTimestamp()
-  }).then(function () { done(T("Thanks, {name}. Your message was sent. I'll reply soon.").replace('{name}', name.split(' ')[0])); form.reset(); })
+  })).then(function () { done(T("Thanks, {name}. Your message was sent. I'll reply soon.").replace('{name}', name.split(' ')[0])); form.reset(); })
     .catch(function () { done(T('Something went wrong. Please try again in a moment.')); })
     .then(function () { btn.disabled = false; });
 });
