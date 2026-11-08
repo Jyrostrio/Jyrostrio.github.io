@@ -48,7 +48,6 @@
           <div class="tile"><div class="tile-inner"><img src="own-6.jpg" alt="Yaymel smiling at the piano in a bright Steinway hall" width="636" height="463" style="object-position:40% 45%"><div class="tile-back"><img class="tb-logo" src="logo-mark.png" alt="" aria-hidden="true" width="146" height="160"><p>The piano opens the door to every style, from Bach to bolero to jazz.</p></div></div></div>
           <div class="tile"><div class="tile-inner"><img src="own-7b.jpg" alt="Yaymel's hand on the keys in deep blue stage light" width="1000" height="524" style="object-position:30% 55%"><div class="tile-back"><img class="tb-logo" src="logo-mark.png" alt="" aria-hidden="true" width="146" height="160"><p>It's never too late: learning piano keeps the mind active at any age.</p></div></div></div>
           <div class="tile"><div class="tile-inner"><img src="own-8.jpg" alt="Yaymel's feet resting by the piano pedals, seen from above" width="800" height="1000" style="object-position:50% 30%"><div class="tile-back"><img class="tb-logo" src="logo-mark.png" alt="" aria-hidden="true" width="146" height="160"><p>One day you'll play the song you love for the people you love.</p></div></div></div>
-          <span class="stack-hint" aria-live="polite">Click the top card to flip it</span>
         </div>
       </div>
       <div class="hero-cta">
@@ -410,90 +409,19 @@ if (FB) FB.collection('reviews').where('status', '==', 'approved').get().then(fu
 (function () {
   var stack = document.querySelector('.strip .stack');
   if (!stack) return;
-  var hint = stack.querySelector('.stack-hint');
   var tiles = [].slice.call(stack.querySelectorAll('.tile'));
-  var tilt = [-9, 6, -4, 8, -6, 3, -2, 7, -5, 4];
-  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var order = [];
-  function nearest(x, y) {
-    var best = tiles[0], bd = Infinity;
-    tiles.forEach(function (t) {
-      var b = t.getBoundingClientRect();
-      var d = Math.hypot(x - (b.left + b.width / 2), y - (b.top + b.height / 2));
-      if (d < bd) { bd = d; best = t; }
+  tiles.forEach(function (t) {
+    t.addEventListener('pointerenter', function (e) { if (e.pointerType === 'mouse') t.classList.add('flipped'); });
+    t.addEventListener('pointerleave', function (e) { if (e.pointerType === 'mouse') t.classList.remove('flipped'); });
+    t.addEventListener('click', function (e) {
+      if (e.pointerType === 'mouse') return;
+      var on = !t.classList.contains('flipped');
+      tiles.forEach(function (o) { o.classList.remove('flipped'); });
+      if (on) t.classList.add('flipped');
     });
-    return best;
-  }
-  function place(animate) {
-    var r = stack.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2;
-    order.forEach(function (t, i) {
-      var prev = t.style.transform; t.style.transition = 'none'; t.style.transform = 'none';
-      var b = t.getBoundingClientRect(); t.style.transform = prev; void t.offsetWidth; t.style.transition = '';
-      var dx = cx - (b.left + b.width / 2), dy = cy - (b.top + b.height / 2);
-      var ti = tiles.indexOf(t);
-      var final = 'translate(' + dx + 'px,' + dy + 'px) rotate(' + tilt[ti] + 'deg) scale(1.3)';
-      t.style.zIndex = String(i + 1);
-      if (animate && t.animate) {
-        var rnd = function (a) { return (Math.random() * 2 - 1) * a; };
-        var w1 = 'translate(' + rnd(140) + 'px,' + rnd(90) + 'px) rotate(' + rnd(35) + 'deg) scale(' + (1 + Math.random() * .25) + ')';
-        var w2 = 'translate(' + (dx * .45 + rnd(160)) + 'px,' + (dy * .45 + rnd(110)) + 'px) rotate(' + rnd(50) + 'deg) scale(' + (1.05 + Math.random() * .3) + ')';
-        var w3 = 'translate(' + (dx * .85 + rnd(70)) + 'px,' + (dy * .85 + rnd(50)) + 'px) rotate(' + (tilt[ti] + rnd(25)) + 'deg) scale(1.35)';
-        t.style.transition = 'none';
-        t.style.transform = final;
-        var anim = t.animate([
-          { transform: 'none' },
-          { transform: w1, offset: .28 },
-          { transform: w2, offset: .58 },
-          { transform: w3, offset: .82 },
-          { transform: final }
-        ], { duration: 2200, delay: i * 90, easing: 'ease-in-out', fill: 'backwards' });
-        anim.onfinish = function () { t.style.transition = ''; };
-      } else {
-        t.style.transitionDelay = '0ms';
-        t.style.transform = final;
-      }
-    });
-  }
-  function top() { return order[order.length - 1]; }
-  function pile(x, y) {
-    if (stack.classList.contains('piled')) return;
-    var t = nearest(x, y);
-    order = tiles.filter(function (o) { return o !== t; }).concat([t]);
-    stack.classList.add('piled');
-    hint.textContent = T('Click the top card to flip it');
-    place(!reduce);
-  }
-  function spread() {
-    stack.classList.remove('piled');
-    tiles.forEach(function (t, i) {
-      t.classList.remove('flipped');
-      t.getAnimations && t.getAnimations().forEach(function (a) { a.cancel(); });
-      t.style.transition = '';
-      t.style.transitionDelay = reduce ? '0ms' : ((tiles.length - 1 - i) * 60) + 'ms';
-      t.style.transform = '';
-    });
-    setTimeout(function () { if (!stack.classList.contains('piled')) tiles.forEach(function (t) { t.style.zIndex = ''; }); }, 1900);
-  }
-  function advance() {
-    var t = top();
-    if (!t.classList.contains('flipped')) {
-      t.classList.add('flipped');
-      hint.textContent = T('Click again for the next card');
-    } else {
-      t.classList.remove('flipped');
-      order = [t].concat(order.slice(0, -1));
-      place(false);
-      hint.textContent = T('Click the top card to flip it');
-    }
-  }
-  stack.addEventListener('pointerenter', function (e) { if (e.pointerType === 'mouse') pile(e.clientX, e.clientY); });
-  stack.addEventListener('pointerleave', function (e) { if (e.pointerType === 'mouse') spread(); });
-  stack.addEventListener('click', function (e) {
-    if (!stack.classList.contains('piled')) { pile(e.clientX, e.clientY); return; }
-    advance();
   });
   document.addEventListener('click', function (e) {
-    if (!stack.contains(e.target) && stack.classList.contains('piled')) spread();
+    if (!stack.contains(e.target)) tiles.forEach(function (o) { o.classList.remove('flipped'); });
   });
 })();
 (function () {
