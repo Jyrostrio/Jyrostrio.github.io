@@ -31,7 +31,9 @@ img{max-width:100%}
 .strip .stack .tile-back{transform:rotateY(180deg);background:#fff;color:#000;display:flex;align-items:center;justify-content:center;padding:5%;text-align:center}
 :root[data-site="light"] .strip .stack .tile-back{background:#000;color:#fff}
 .strip .stack .tile-back{container-type:size}
-.strip .stack .tile-back p{margin:0;font:500 9.6cqi/1.25 var(--body);letter-spacing:0;text-wrap:balance}
+.strip .stack .tile-back{flex-direction:column;gap:0}
+.strip .stack .tile-back img.tb-logo{position:absolute;inset:9cqh 0 auto 0;margin:0 auto;width:auto;height:min(11cqh,13.5cqi);flex:none;border-radius:0;object-fit:contain;filter:none!important;transform:none!important;backface-visibility:visible}
+.strip .stack .tile-back p{margin:0;font:300 min(9.6cqi,9.4cqh)/1.25 var(--body);letter-spacing:.01em;text-wrap:balance}
 .strip .stack.piled .tile{box-shadow:none}
 .hero.silver .strip .stack img{box-shadow:none}
 .strip .stack .tile{box-shadow:0 0 22px 2px rgba(0,0,0,.4),0 0 8px rgba(0,0,0,.25)}
@@ -303,6 +305,8 @@ section{padding-block:clamp(4rem,9vw,7rem);border-top:1px solid var(--line)}
 .reviews{display:grid;gap:2.5rem;align-items:start}
 @media (min-width:900px){.reviews{grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:3.5rem}}
 .review-list{display:grid;gap:1rem;min-width:0}
+.review-list:not(.rv-open) .review.rv-extra{display:none}
+.faq-tools.rv-tools{margin:1.25rem 0 0}
 .review-empty{display:grid;gap:.6rem;justify-items:start;padding:2.5rem 2rem;border:1px dashed var(--line);background:var(--bg)}
 .review-empty p{font:800 1.3rem/1.2 var(--heavy);letter-spacing:-0.02em}
 .review-empty span{color:var(--muted)}

@@ -40,14 +40,14 @@
       </div>
       <div class="strip">
         <div class="stack">
-          <div class="tile"><div class="tile-inner"><img src="own-1.jpg" alt="Yaymel Jorva McCatty playing a grand piano in a dark suit" width="1000" height="667" style="object-position:40% 45%"><div class="tile-back"><p>On the piano, melody and harmony live in your own two hands.</p></div></div></div>
-          <div class="tile"><div class="tile-inner"><img src="own-2.jpg" alt="Close-up of Yaymel's hands on the keys of a Steinway grand" width="1000" height="658" style="object-position:50% 35%"><div class="tile-back"><p>Studies link music lessons with stronger listening, reading and math skills.</p></div></div></div>
-          <div class="tile"><div class="tile-inner"><img src="own-3.jpg" alt="Yaymel performing on stage at Carnegie Hall" width="1000" height="494" style="object-position:30% 50%"><div class="tile-back"><p>A few minutes at the keys can calm the mind and lift your mood.</p></div></div></div>
-          <div class="tile"><div class="tile-inner"><img src="own-4.jpg" alt="Yaymel at the piano in concert, in warm stage light" width="867" height="1000" style="object-position:40% 40%"><div class="tile-back"><p>Reading music teaches your brain to think ahead, a skill for life.</p></div></div></div>
-          <div class="tile"><div class="tile-inner"><img src="own-5.jpg" alt="Yaymel performing at Carnegie Hall in golden light" width="1000" height="547" style="object-position:30% 55%"><div class="tile-back"><p>Every piece you learn builds patience, discipline and confidence.</p></div></div></div>
-          <div class="tile"><div class="tile-inner"><img src="own-6.jpg" alt="Yaymel smiling at the piano in a bright Steinway hall" width="636" height="463" style="object-position:40% 45%"><div class="tile-back"><p>The piano opens the door to every style, from Bach to bolero to jazz.</p></div></div></div>
-          <div class="tile"><div class="tile-inner"><img src="own-7b.jpg" alt="Yaymel's hand on the keys in deep blue stage light" width="1000" height="524" style="object-position:30% 55%"><div class="tile-back"><p>It's never too late: learning piano keeps the mind active at any age.</p></div></div></div>
-          <div class="tile"><div class="tile-inner"><img src="own-8.jpg" alt="Yaymel's feet resting by the piano pedals, seen from above" width="800" height="1000" style="object-position:50% 30%"><div class="tile-back"><p>One day you'll play the song you love for the people you love.</p></div></div></div>
+          <div class="tile"><div class="tile-inner"><img src="own-1.jpg" alt="Yaymel Jorva McCatty playing a grand piano in a dark suit" width="1000" height="667" style="object-position:40% 45%"><div class="tile-back"><img class="tb-logo" src="logo-mark.png" alt="" aria-hidden="true" width="146" height="160"><p>On the piano, melody and harmony live in your own two hands.</p></div></div></div>
+          <div class="tile"><div class="tile-inner"><img src="own-2.jpg" alt="Close-up of Yaymel's hands on the keys of a Steinway grand" width="1000" height="658" style="object-position:50% 35%"><div class="tile-back"><img class="tb-logo" src="logo-mark.png" alt="" aria-hidden="true" width="146" height="160"><p>Studies link music lessons with stronger listening, reading and math skills.</p></div></div></div>
+          <div class="tile"><div class="tile-inner"><img src="own-3.jpg" alt="Yaymel performing on stage at Carnegie Hall" width="1000" height="494" style="object-position:30% 50%"><div class="tile-back"><img class="tb-logo" src="logo-mark.png" alt="" aria-hidden="true" width="146" height="160"><p>A few minutes at the keys can calm the mind and lift your mood.</p></div></div></div>
+          <div class="tile"><div class="tile-inner"><img src="own-4.jpg" alt="Yaymel at the piano in concert, in warm stage light" width="867" height="1000" style="object-position:40% 40%"><div class="tile-back"><img class="tb-logo" src="logo-mark.png" alt="" aria-hidden="true" width="146" height="160"><p>Reading music teaches your brain to think ahead, a skill for life.</p></div></div></div>
+          <div class="tile"><div class="tile-inner"><img src="own-5.jpg" alt="Yaymel performing at Carnegie Hall in golden light" width="1000" height="547" style="object-position:30% 55%"><div class="tile-back"><img class="tb-logo" src="logo-mark.png" alt="" aria-hidden="true" width="146" height="160"><p>Every piece you learn builds patience, discipline and confidence.</p></div></div></div>
+          <div class="tile"><div class="tile-inner"><img src="own-6.jpg" alt="Yaymel smiling at the piano in a bright Steinway hall" width="636" height="463" style="object-position:40% 45%"><div class="tile-back"><img class="tb-logo" src="logo-mark.png" alt="" aria-hidden="true" width="146" height="160"><p>The piano opens the door to every style, from Bach to bolero to jazz.</p></div></div></div>
+          <div class="tile"><div class="tile-inner"><img src="own-7b.jpg" alt="Yaymel's hand on the keys in deep blue stage light" width="1000" height="524" style="object-position:30% 55%"><div class="tile-back"><img class="tb-logo" src="logo-mark.png" alt="" aria-hidden="true" width="146" height="160"><p>It's never too late: learning piano keeps the mind active at any age.</p></div></div></div>
+          <div class="tile"><div class="tile-inner"><img src="own-8.jpg" alt="Yaymel's feet resting by the piano pedals, seen from above" width="800" height="1000" style="object-position:50% 30%"><div class="tile-back"><img class="tb-logo" src="logo-mark.png" alt="" aria-hidden="true" width="146" height="160"><p>One day you'll play the song you love for the people you love.</p></div></div></div>
           <span class="stack-hint" aria-live="polite">Click the top card to flip it</span>
         </div>
       </div>
@@ -352,9 +352,9 @@ function renderReviews() {
   var empty = list.querySelector('.review-empty'); if (empty) empty.style.display = 'none';
   list.querySelectorAll('.review').forEach(function (n) { n.remove(); });
   var total = 0;
-  REVIEWS.forEach(function (r) {
+  REVIEWS.forEach(function (r, i) {
     total += r.rating;
-    var f = document.createElement('figure'); f.className = 'review'; f.setAttribute('data-noi18n', '');
+    var f = document.createElement('figure'); f.className = 'review' + (i >= 3 ? ' rv-extra' : ''); f.setAttribute('data-noi18n', '');
     var date = r.createdAt && r.createdAt.toDate ? r.createdAt.toDate().toLocaleDateString(LANG === 'es' ? 'es' : 'en-US', { year: 'numeric', month: 'long' }) : '';
     f.innerHTML = '<div class="stars" role="img" aria-label="' + r.rating + ' / 5">' + starRow(r.rating) + '</div>' +
       '<blockquote></blockquote><figcaption><strong></strong><span></span></figcaption>' +
@@ -368,6 +368,23 @@ function renderReviews() {
   var avg = (total / REVIEWS.length).toFixed(1);
   sum.innerHTML = '<strong>' + avg + '</strong><div class="stars" aria-hidden="true">' + starRow(Math.round(avg)) + '</div><span>' + REVIEWS.length + ' ' + esc(T(REVIEWS.length === 1 ? 'review' : 'reviews')) + '</span>';
   sum.hidden = false;
+  var tools = document.getElementById('rv-tools');
+  if (REVIEWS.length > 3) {
+    if (!tools) {
+      tools = document.createElement('div'); tools.id = 'rv-tools'; tools.className = 'faq-tools rv-tools';
+      tools.innerHTML = '<button class="btn ghost" type="button" data-rv="1"></button><button class="btn ghost" type="button" data-rv="0"></button>';
+      tools.addEventListener('click', function (e) {
+        var b = e.target.closest('[data-rv]'); if (!b) return;
+        var open = b.getAttribute('data-rv') === '1'; list.classList.toggle('rv-open', open);
+        if (!open) list.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+      list.appendChild(tools);
+    }
+    tools.setAttribute('data-noi18n', '');
+    tools.children[0].textContent = T('Expand all') + ' (' + REVIEWS.length + ')';
+    tools.children[1].textContent = T('Collapse all');
+    list.appendChild(tools);
+  }
 }
 if (FB) FB.collection('reviews').where('status', '==', 'approved').get().then(function (snap) {
   snap.forEach(function (d) { REVIEWS.push(d.data()); });
